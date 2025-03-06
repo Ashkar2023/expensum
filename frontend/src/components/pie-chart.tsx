@@ -12,6 +12,7 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart"
+import { cn } from "@/lib/utils"
 
 const chartData = [
     { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
@@ -47,11 +48,10 @@ const chartConfig = {
     },
 } satisfies ChartConfig
 
-export function ExpensePieChart() {
-    
+export function ExpensePieChart({ className, ...props }: React.ComponentProps<"div">) {
 
     return (
-        <Card className="flex flex-col">
+        <Card className={cn("flex flex-col", className)} {...props}>
             <CardHeader className="items-center pb-0">
                 <CardTitle>Budget breakdown</CardTitle>
                 <CardDescription>January 2024</CardDescription>
@@ -59,19 +59,18 @@ export function ExpensePieChart() {
             <CardContent className="flex-1 pb-0">
                 <ChartContainer
                     config={chartConfig}
-                    className="mx-auto aspect-square max-h-[250px]"
+                    className="mx-auto aspect-square max-h-[180px]"
                 >
                     <PieChart>
                         <ChartTooltip
                             cursor={false}
                             content={<ChartTooltipContent hideLabel />}
-                            labelClassName="text-primary"
                         />
                         <Pie
                             data={chartData}
                             dataKey="visitors"
                             nameKey="browser"
-                            innerRadius={60}
+                            innerRadius={45}
                             strokeWidth={5}
                         >
                             <Label

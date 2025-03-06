@@ -1,4 +1,4 @@
-import { LayoutDashboard, LucideIcon, ReceiptIndianRupee, SettingsIcon } from "lucide-react"
+import { CoinsIcon, LayoutDashboard, LucideIcon, ReceiptIndianRupee, SettingsIcon } from "lucide-react"
 import { Button } from "./ui/button"
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "./ui/sidebar"
 import { useLocation } from "react-router"
@@ -8,6 +8,11 @@ const applicationItems: { title: string, url: string, icon: LucideIcon }[] = [
         title: "dashboard",
         icon: LayoutDashboard,
         url: "/"
+    },
+    {
+        title:"expenses",
+        icon: CoinsIcon,
+        url:"/expense"
     },
     {
         title: "settings",

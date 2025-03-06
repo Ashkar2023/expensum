@@ -6,7 +6,12 @@ export const Dashboard = () => {
         <div className="p-4 bg-secondary h-full">
             <SidebarTrigger />
 
-            <ExpensePieChart />
+            <div className="grid grid-cols-[1fr_1fr_1fr] grid-rows-2 gap-1">
+                <ExpensePieChart />
+                <ExpensePieChart className="col-span-2"/>
+                <ExpensePieChart className="col-span-2"/>
+                <ExpensePieChart />
+            </div>
         </div>
     )
 }
