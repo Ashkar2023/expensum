@@ -1,0 +1,37 @@
+{
+    "compilerOptions": {
+        "target": "ES2022", // Use modern JS features with best performance
+        "module": "NodeNext", // Use ES modules (for "import" instead of "require")
+        "rootDir": "src", // Keep TypeScript files in "src"
+        "outDir": "dist", // Compile output to "dist"
+        "moduleResolution": "NodeNext", // Needed for proper module resolution in Node.js
+        "allowJs": false, // Enforce TypeScript-only files
+        "strict": true, // Enable strict mode for better type safety
+        "noImplicitAny": true, // Prevent implicit "any" types
+        "strictNullChecks": true, // Ensure variables are not undefined/null unintentionally
+        "strictFunctionTypes": true, // Improve function type checking
+        "noImplicitThis": true, // Prevent "this" errors
+        "esModuleInterop": true, // Allow importing CommonJS modules
+        "forceConsistentCasingInFileNames": true, // Prevent issues on case-sensitive file systems
+        "skipLibCheck": true, // Skip type checking for node_modules (faster compilation)
+        "resolveJsonModule": true, // Allow importing JSON files
+        "experimentalDecorators": true, // Enable decorators (useful for NestJS)
+        "emitDecoratorMetadata": true, // Allow metadata reflection (needed for some frameworks)
+        "noUnusedParameters": true, // Warn about unused function parameters
+        "noFallthroughCasesInSwitch": true, // Prevent unintended fallthrough in switch cases
+        "useDefineForClassFields": true, // Align class field initialization with JavaScript
+        "incremental": true, // Enable incremental compilation for performance
+        "noEmit": false, // Allow emitting compiled JavaScript files
+        "lib": [
+            "ES2022"
+        ]
+    },
+    "include": [
+        "src"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist",
+        "**/*.test.ts"
+    ]
+}
