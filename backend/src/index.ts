@@ -10,6 +10,8 @@ import { categoryRouter } from "./modules/category/category.routes.js";
 import cookieParser from "cookie-parser"
 import { expenseRoutes } from "./modules/expense/expense.routes.js";
 import { budgetRouter } from "./modules/budget/budget.routes.js";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 loadEnv();
 await connectDb()
@@ -33,6 +35,9 @@ declare module "express" {
     }
 }
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use(express.static(path.join(__dirname, "../public/")))
 
 app.use("/v1/users/auth", userAuthRouter);
 app.use(authenticateUser);
