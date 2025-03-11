@@ -17,11 +17,10 @@
         "resolveJsonModule": true, // Allow importing JSON files
         "experimentalDecorators": true, // Enable decorators (useful for NestJS)
         "emitDecoratorMetadata": true, // Allow metadata reflection (needed for some frameworks)
-        "noUnusedParameters": true, // Warn about unused function parameters
         "noFallthroughCasesInSwitch": true, // Prevent unintended fallthrough in switch cases
         "useDefineForClassFields": true, // Align class field initialization with JavaScript
-        "incremental": true, // Enable incremental compilation for performance
         "noEmit": false, // Allow emitting compiled JavaScript files
+        "noUnusedLocals": true,
         "lib": [
             "ES2022"
         ]

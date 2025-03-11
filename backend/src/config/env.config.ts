@@ -1,23 +1,24 @@
 import { EnvNotFoundError } from "extils";
-import dotenv from "dotenv"
+import dotenv from "dotenv";
+import { appLogger } from "../utils/logger/index.js";
 
 dotenv.configDotenv();
 
 export const envConfig = {
     PORT: process.env.PORT || 3000,
     TOKEN_SECRET: process.env.TOKEN_SECRET!,
-    NODE_ENV: process.env.NODE_ENV || "development"
+    NODE_ENV: process.env.NODE_ENV || "development",
+    MONGO_DB_URL: process.env.MONGO_DB_URL!,
 }
 
-    ;
-(function () {
+export function loadEnv() {
     for (let env in envConfig) {
         if (!envConfig[env as keyof typeof envConfig]) {
-            // log to winston envConfig[env as keyof typeof envConfig]
+            appLogger.error(envConfig[env as keyof typeof envConfig]);
             
-            throw new EnvNotFoundError(env, "this")
+            throw new EnvNotFoundError(env, "expensum backend")
         }
-
-        // log env fine to winston
     }
-})();
+    
+    appLogger.info("ENV's all set");
+};

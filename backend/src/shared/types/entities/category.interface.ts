@@ -1,5 +1,7 @@
+import { ObjectId } from "mongoose";
+
 export interface ICategory {
-    user_id: string,
+    user_id: ObjectId,
     name: string,
-    readonly: boolean
+    readonly?: boolean
 }

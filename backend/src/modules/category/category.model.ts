@@ -1,10 +1,11 @@
-import { Schema, model, Document } from 'mongoose';
-import { ICategory } from '../../shared/types/entities/category.interface';
+import { Schema, model } from 'mongoose';
+import { ICategory } from '../../shared/types/entities/category.interface.js';
 
 const CategorySchema = new Schema<ICategory>({
     user_id: {
-        type: String,
-        required: true
+        type: Schema.Types.ObjectId,
+        required: true,
+        index: 1
     },
     name: {
         type: String,
@@ -14,14 +15,17 @@ const CategorySchema = new Schema<ICategory>({
     },
     readonly: {
         type: Boolean,
-        required: true
+        default: false
     }
+}, {
+    timestamps: true
 });
 
-CategorySchema.index({ user_id: 1 });
+
+CategorySchema.index({ user_id: 1, name: 1 }, { unique: true });
 
 // make a compound index if on admin side, and wants to search for top categories
 
-const Category = model<ICategory>('Category', CategorySchema);
+const CategoryModel = model<ICategory>('Category', CategorySchema, "categories");
 
-export default Category;
+export default CategoryModel;

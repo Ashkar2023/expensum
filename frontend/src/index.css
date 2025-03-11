@@ -1,4 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,500;1,500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap");
+
 @import "tailwindcss";
 
 @plugin "tailwindcss-animate";
@@ -10,8 +11,8 @@
     --background: oklch(24.69% 0.011 242.62);
     --foreground: oklch(100% 0 0);
 
-    --card: oklch(24.69% 0.011 242.62); 
-    --card-foreground: oklch(100% 0 0); 
+    --card: oklch(24.69% 0.011 242.62);
+    --card-foreground: oklch(100% 0 0);
 
     --popover: oklch(24.69% 0.011 242.62);
     --popover-foreground: oklch(100% 0 0);
@@ -19,13 +20,13 @@
     --primary: oklch(34.46% 0.021 242.68);
     --primary-foreground: oklch(100% 0 0);
 
-    --secondary:  oklch(45.85% 0.0109 204.33);
+    --secondary: oklch(45.85% 0.0109 204.33);
     --secondary-foreground: oklch(24.69% 0.011 242.62);
 
     --muted: oklch(85.76% 0.032 215.07);
     --muted-foreground: oklch(34.46% 0.021 242.68);
 
-    --accent: oklch(69.94% 0.106 48.94);
+    --accent:  oklch(54.12% 0.1581 146.87);
     --accent-foreground: oklch(24.69% 0.011 242.62);
 
     --brand: oklch(65% 0.15 145);
@@ -39,10 +40,11 @@
     --ring: oklch(70% 0.032 215.07);
 
     --chart-1: oklch(40.24% 0.1056 147.76);
-    --chart-2: oklch(67.82% 0.1716 150.56);
+    --chart-2: oklch(67.82% 0.17 150.56);
     --chart-3: oklch(54.12% 0.1581 146.87);
-    --chart-4: oklch(48.00% 0.1200 148.50);
-    --chart-5: oklch(60.00% 0.1400 149.00);
+    --chart-4: oklch(48% 0.12 148.5);
+    --chart-5: oklch(60% 0.14 149);
+    --chart-6: oklch(55% 0.10 149);
 
     --radius: 0;
 
@@ -118,6 +120,7 @@
     --color-chart-3: var(--chart-3);
     --color-chart-4: var(--chart-4);
     --color-chart-5: var(--chart-5);
+    --color-chart-6: var(--chart-6);
     --radius-sm: calc(var(--radius) - 4px);
     --radius-md: calc(var(--radius) - 2px);
     --radius-lg: var(--radius);
@@ -143,4 +146,49 @@
 
 @theme {
     --font-sans: "JetBrains Mono", sans-serif;
+
+    --animate-caret-blink: caret-blink 1.25s ease-out infinite;
+
+    @keyframes caret-blink {
+        
+        0%,70%,100% {
+            opacity: 1;
+        }
+        20%,50% {
+            opacity: 1;
+        }
+    }
+}
+
+.no-scrollbar{
+    scrollbar-width: none; /* FireFox */
+    -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar{
+    display: none;
+}
+
+
+/* .scrollbar-thumb-only {
+    scrollbar-width: thin;
+    scrollbar-color: red transparent;
+} */
+
+.scrollbar-thumb-only::-webkit-scrollbar {
+    width: 8px;
+}
+ 
+.scrollbar-thumb-only::-webkit-scrollbar-button {
+    display: none;
+}
+
+.scrollbar-thumb-only::-webkit-scrollbar-thumb {
+    background-color: var(--foreground);
+    border-radius: 8px;
+}
+
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button{
+    display: none;
 }

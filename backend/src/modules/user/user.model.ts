@@ -1,8 +1,5 @@
-import { Schema, model, Document } from 'mongoose';
-import { IUser } from '../../shared/types/entities/user.interface';
-
-// Define the User type
-
+import { Model, Schema, model } from 'mongoose';
+import { IUser } from '../../shared/types/entities/user.interface.js';
 
 const userSchema = new Schema<IUser>({
     email: {
@@ -14,12 +11,14 @@ const userSchema = new Schema<IUser>({
     password: {
         type: String,
         required: true,
+    },
+    username: {
+        type: String,
+        required: true,
+        trim:true
     }
 }, {
     timestamps: true
 });
 
-// Create the User model
-const UserModel = model<IUser>('User', userSchema, "users");
-
-export default UserModel;
+export const userModel: Model<IUser> = model<IUser>("User", userSchema, "users")

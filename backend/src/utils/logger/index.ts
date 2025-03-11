@@ -1,11 +1,10 @@
 import winston from "winston";
-import { envConfig } from "../../config/env.config.js";
 import { devLogger } from "./developmentLogger.js";
 
-export let logger: winston.Logger;
+export let appLogger: winston.Logger;
 
-if (envConfig.NODE_ENV === "production") {
-    logger = devLogger
+if (process.env.NODE_ENV === "production") {
+    appLogger = devLogger
 } else {
-    logger = devLogger
+    appLogger = devLogger
 }

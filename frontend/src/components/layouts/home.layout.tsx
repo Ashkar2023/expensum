@@ -4,9 +4,9 @@ import { AppSidebar } from '../app-sidebar'
 
 export const HomeLayout = () => {
     return (
-        <SidebarProvider>
+        <SidebarProvider className=''>
             <AppSidebar />
-            
+
             <main className='w-full'>
                 <Outlet />
             </main>

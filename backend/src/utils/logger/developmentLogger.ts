@@ -1,6 +1,6 @@
 import winston, { format } from "winston";
 
-const { combine, timestamp, label, printf, colorize } = format;
+const { combine, timestamp, printf, colorize } = format;
 
 const myFormat = printf(({ message, level, timestamp }) => {
     const paddedLevel = level.padStart(7);
@@ -11,7 +11,7 @@ export const devLogger = winston.createLogger({
     level: "debug",
     format: combine(
         colorize(),
-        timestamp({ format: "HH:mm:ss" }),
+        timestamp({ format: "DD/MM-ddd-hh:mm:ss" }),
         myFormat
     ),
     // defaultMeta: { service : "user-service"}

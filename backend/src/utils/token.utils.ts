@@ -1,5 +1,5 @@
 import { BadRequestError } from "extils";
-import { SignJWT, jwtVerify, decodeJwt, JWTPayload, JWTVerifyResult } from "jose"
+import { SignJWT, jwtVerify, decodeJwt, JWTVerifyResult } from "jose"
 
 export type TokenType = "ACCESS" | "REFRESH" | "PWD_RESET";
 

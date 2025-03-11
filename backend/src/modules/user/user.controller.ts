@@ -1,29 +1,57 @@
-import { NextFunction, Request, Response } from "express";
-import { signJWT, verifyJWT, TokenType } from "../../utils/token.utils";
-import { HydratedDocument, Model } from "mongoose";
-import { IUser } from "../../shared/types/entities/user.interface";
-import UserModel from "./user.model";
+import { NextFunction, Request } from "express";
+import { signJWT } from "../../utils/token.utils.js";
 import { compare, hash } from "bcryptjs";
-import { envConfig } from "../../config/env.config";
-import { BadRequestError, ResponseCreator, TokenError } from "extils";
-import { TokenErrorTypes } from "../../shared/types/token.types";
+import { envConfig } from "../../config/env.config.js";
+import { BadRequestError, ConflictError, DatabaseOpError, ResponseCreator } from "extils";
+import { appLogger } from "../../utils/logger/index.js";
+import { Model } from "mongoose";
+import { IUser } from "../../shared/types/entities/user.interface.js";
+import { appEmitter, appEmitterEvents } from "../../events/index.js";
+import { isDevMode } from "../../utils/env.utils.js";
+
+const adjectives = ["Cool", "Swift", "Brave", "Smart", "Witty", "Fast", "Clever", "Bold"];
+const nouns = ["Tiger", "Eagle", "Panda", "Wolf", "Cheetah", "Falcon", "Shark", "Hawk"];
+
+export const generateRandomUsername = (): string => {
+    const randomAdj = adjectives[Math.round(Math.random() * adjectives.length)];
+    const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
+    const randomNumber = Math.floor(1000 + Math.random() * 9000);
+
+    return `${randomAdj}${randomNoun}${randomNumber}`;
+};
 
 export class UserController {
-    private _userDb: Model<IUser>;
 
-    constructor() {
-        this._userDb = UserModel;
+    constructor(
+        private _UserModel: Model<IUser>,
+    ) {
     }
 
     async signup(req: Request, next: NextFunction) {
         const { email, password } = req.body;
 
-        const user = new this._userDb({
-            email,
-            password: await hash(password, 10)
-        })
+        const hashedPassword = await hash(password, 10);
 
-        await user.save();
+        let userExists = await this._UserModel.findOne({ email });
+
+        if (userExists) {
+            throw new ConflictError("Try with another email");
+        }
+
+        let user;
+        try {
+            user = await this._UserModel.create({
+                email,
+                username: generateRandomUsername(),
+                password: hashedPassword
+            })
+        } catch (error) {
+            appLogger.error("user creation failed", email);
+            throw new DatabaseOpError("user creation failed", 400);
+        }
+
+        appLogger.info("user created");
+        appEmitter.emit(appEmitterEvents.userCreated, user)
 
         const accessToken = await signJWT({
             payload: { sub: user.id },
@@ -41,9 +69,14 @@ export class UserController {
         return response
             .setStatusCode(200)
             .setMessage("Account created")
-            .setData({})
+            .setData({
+                _id: user._id,
+                email: user.email,
+                username: user.username,
+            })
             .setCookie("ajwt", accessToken, {
-                httpOnly: true
+                httpOnly: true,
+                ...(isDevMode() ? { secure: true } : {})
             })
             .setCookie("rjwt", refreshToken, {
                 httpOnly: true
@@ -54,7 +87,13 @@ export class UserController {
     async login(req: Request, next: NextFunction) {
         const { email, password } = req.body;
 
-        const user = await this._userDb.findOne({ email }).lean();
+        let user;
+        try {
+            user = await this._UserModel.findOne({ email }).lean();
+        } catch (error) {
+            appLogger.error("Database operation failed while finding user", error);
+            throw new DatabaseOpError("Database operation failed", 500);
+        }
 
         if (!user) {
             throw new BadRequestError("Invalid credential", 404)
@@ -82,30 +121,27 @@ export class UserController {
         return response
             .setStatusCode(200)
             .setMessage("Login successful")
-            .setData({})
+            .setData({
+                username: user.username,
+                email: user.email,
+                _id: user._id
+            })
             .setCookie("ajwt", accessToken, {
-                httpOnly: true
+                httpOnly: true,
+                ...(isDevMode() ? { secure: true } : {}) // you can write this way to not include the prop
             })
             .setCookie("rjwt", refreshToken, {
-                httpOnly: true
+                httpOnly: true,
+                secure: !isDevMode()
             })
             .get();
     }
 
     async refreshToken(req: Request, next: NextFunction) {
-        const { rjwt } = req.cookies;
-
-        if (!rjwt) {
-            throw new TokenError("Invalid refresh token", 404, TokenErrorTypes.invalid_refresh_token.toString())
-        }
-
-        const decoded = await verifyJWT({
-            jwt: rjwt,
-            secret: envConfig.TOKEN_SECRET
-        });
+        const user = await this._UserModel.findOne({ _id: req.user }).lean();
 
         const accessToken = await signJWT({
-            payload: { sub: decoded.payload.sub },
+            payload: { sub: user?._id.toString() },
             secret: envConfig.TOKEN_SECRET,
             tokenType: "ACCESS"
         });
@@ -116,7 +152,26 @@ export class UserController {
             .setMessage("Token refreshed")
             .setData({})
             .setCookie("ajwt", accessToken, {
-                httpOnly: true
+                httpOnly: true,
+                secure: !isDevMode()
+            })
+            .get();
+    }
+
+    async logout(req: Request, next: NextFunction) {
+
+        const response = new ResponseCreator();
+        return response
+            .setStatusCode(200)
+            .setMessage("User logged out")
+            .setData({})
+            .setCookie("ajwt", "", {
+                httpOnly: true,
+                expires: new Date()
+            })
+            .setCookie("rjwt", "", {
+                httpOnly: true,
+                expires: new Date()
             })
             .get();
     }

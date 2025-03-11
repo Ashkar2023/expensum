@@ -1,87 +1,195 @@
-import { ReceiptIndianRupee } from "lucide-react"
-
+import { Loader2, ReceiptIndianRupee } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useNavigate } from "react-router"
+import { useMutation } from "@tanstack/react-query"
+import { loginUser, signupUser } from "@/api/queries/user.queries"
+import useUserStore from "@/stores/user.store"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form"
+import { toast } from "sonner"
+import { api_v1_data } from "@/types/api-response.types"
+import { IUser } from "@/types/entities/user.interface"
+import { AxiosError } from "axios"
 
+const loginSchema = z.object({
+    email: z.string().email({ message: "Please enter a valid email address" }),
+    password: z.string().min(8, { message: "Password must be at least 8 characters" }),
+})
+
+const signupSchema = loginSchema
+    .extend({
+        confirmPassword: z.string().min(8, { message: "Password must be at least 8 characters" }),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+        message: "Passwords don't match",
+        path: ["confirmPassword"],
+    })
+
+// login component
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
     const [login, setLogin] = useState(true);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    const setUser = useUserStore(state => state.setUser);
+    const navigate = useNavigate()
+
+    const { mutate, isPending } = useMutation<api_v1_data<IUser>, AxiosError<api_v1_data>, z.infer<typeof loginSchema | typeof signupSchema>>({
+        mutationKey: [login ? "login" : "signup"],
+        mutationFn: login ? loginUser : signupUser,
+        onSuccess(data, variables, context) {
+            setUser({ ...data.body });
+        },
+        onError(error) {
+            toast.error(error.response?.data.message ?? "Internal server error", {
+                style: {
+                    border: "0.1px solid var(--color-border)",
+                    borderRadius: "0"
+                }
+            })
+        },
+        retry: false,
+    })
+
+
+    const form = useForm<z.infer<typeof loginSchema> | z.infer<typeof signupSchema>>({
+        resolver: zodResolver(login ? loginSchema : signupSchema),
+        defaultValues: {
+            email: "",
+            password: "",
+            ...(login ? {} : { confirmPassword: "" }),
+        },
+        mode: "onTouched"
+    })
+
+    function onSubmit(values: z.infer<typeof loginSchema> | z.infer<typeof signupSchema>) {
+        mutate(values)
+    }
+
+    useEffect(() => {
+        let timer = setTimeout(() => {
+            form.reset()
+        }, 350)
+
+        const visibilityTimer = setTimeout(
+            () => {
+                setShowConfirmPassword(!login)
+            },
+            login ? 300 : 0,
+        )
+
+        return () => {
+            clearTimeout(timer)
+            clearTimeout(visibilityTimer)
+        }
+    }, [login])
 
     return (
         <div className={cn("flex flex-col gap-6", className, "min-w-[350px]")} {...props}>
-            <form noValidate>
-                <div className="flex flex-col gap-6">
-                    <div className="flex flex-col items-center gap-2">
-                        <a
-                            href="#"
-                            className="flex flex-col items-center gap-2 font-medium"
-                        >
-                            <div className="flex items-center justify-center rounded-md">
-                                <ReceiptIndianRupee  className="text-brand" size={"4rem"} />
-                            </div>
-                            <span className="sr-only">Expensum.</span>
-                        </a>
-                        <h1 className="text-2xl font-extrabold jetbrains-mono text-center"><span className="font-light text-xl">Welcome to </span><br />Expensum.</h1>
-                    </div>
-                    <div className="flex flex-col gap-5">
-                        <div className="grid gap-3">
-                            <Label htmlFor="email">Email</Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                placeholder="m@example.com"
-                                required
-                            />
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} noValidate >
+                    <div className="flex flex-col gap-6">
+                        <div className="flex flex-col items-center gap-2">
+                            <a
+                                href="#"
+                                className="flex flex-col items-center gap-2 font-medium"
+                            >
+                                <div className="flex items-center justify-center rounded-md">
+                                    <ReceiptIndianRupee className="text-brand" size={"4rem"} />
+                                </div>
+                                <span className="sr-only">Expensum.</span>
+                            </a>
+                            <h1 className="text-2xl font-extrabold jetbrains-mono text-center"><span className="font-light text-xl">Welcome to </span><br />Expensum.</h1>
                         </div>
-                        <div className="grid gap-3">
-                            <Label htmlFor="password">Password</Label>
-                            <Input
-                                id="password"
-                                type="password"
-                                placeholder="********"
-                                required
+                        <div className="flex flex-col gap-5">
+                            <FormField
+                                control={form.control}
+                                name="email"
+                                render={({ field }) => (
+                                    <FormItem className="grid gap-2">
+                                        <FormLabel htmlFor="email">Email</FormLabel>
+                                        <FormControl>
+                                            <Input id="email" type="email" placeholder="m@example.com" {...field} />
+                                        </FormControl>
+                                        <FormMessage className="text-xs text-destructive" />
+                                    </FormItem>
+                                )}
                             />
-                        </div>
-                        <div className="overflow-hidden transition-[max-height] duration-300 ease-in-out"
-                            style={{ maxHeight: login ? "0px" : "100px" }}>
-                            <div className={cn(
-                                "flex flex-col gap-3 transition-all duration-300 ease-in-out",
-                                login ? "opacity-0 -translate-y-3" : "opacity-100 translate-y-0"
-                            )}>
-                                <Label htmlFor="ConfirmPassword">Re-Enter Password</Label>
-                                <Input id="ConfirmPassword" type="password" placeholder="********" />
+                            <FormField
+                                control={form.control}
+                                name="password"
+                                render={({ field }) => (
+                                    <FormItem className="grid gap-2">
+                                        <FormLabel htmlFor="password">Password</FormLabel>
+                                        <FormControl>
+                                            <Input id="password" type="password" placeholder="********" {...field} />
+                                        </FormControl>
+                                        <FormMessage className="text-xs text-destructive" />
+                                    </FormItem>
+                                )}
+                            />
+                            <div
+                                className="overflow-x-visible transition-[max-height] duration-300 ease-in-out"
+                                style={{ maxHeight: login ? "0px" : "100px" }}
+                            >
+                                <div className={cn(
+                                    "flex flex-col gap-3 transition-all duration-300 ease-in-out",
+                                    login ? "opacity-0 -translate-y-3" : "opacity-100 translate-y-0"
+                                )}>
+                                    {showConfirmPassword && (
+                                        <FormField
+                                            control={form.control}
+                                            name="confirmPassword"
+                                            render={({ field }) => (
+                                                <FormItem className="grid gap-2">
+                                                    <FormLabel htmlFor="confirmPassword">Re-Enter Password</FormLabel>
+                                                    <FormControl>
+                                                        <Input id="confirmPassword" type="password" placeholder="********" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage className="text-xs text-destructive" />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    )}
+                                </div>
                             </div>
+
+                            {/* Submit Button */}
+                            <Button type="submit"
+                                className="w-full "
+                                disabled={isPending}
+                            >
+                                {isPending && <Loader2 className="animate-spin" />}
+                                {login ? "Login" : "Signup"}
+                            </Button>
                         </div>
 
-                        <Button type="submit" className="w-full cursor-pointer">
-                            { login ? "Login" : "Signup"}
-                        </Button>
-                    </div>
-
-                    {/* Auth type Switch */}
-                    <div className="text-center text-xs opacity-40">
-                        {
-                            login ?
-                                "Don't have an account? " :
-                                "Already have an account? "
-                        }
-                        <span
-                            onClick={() => setLogin(prev => !prev)}
-                            className="cursor-pointer underline underline-offset-4"
-                        >
+                        {/* Auth type Switch */}
+                        <div className="text-center text-xs opacity-40">
                             {
-                                login ? "signup" : "login"
+                                login ?
+                                    "Don't have an account? " :
+                                    "Already have an account? "
                             }
-                        </span>
-                    </div>
-                    {/* <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+                            <span
+                                onClick={() => setLogin(prev => !prev)}
+                                className="cursor-pointer underline underline-offset-4"
+                            >
+                                {
+                                    login ? "signup" : "login"
+                                }
+                            </span>
+                        </div>
+                        {/* <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
                         <span className="bg-background text-muted-foreground relative z-10 px-2">
                             Or
                         </span>
                     </div> */}
-                    {/* <div className="grid gap-4 sm:grid-cols-2">
+                        {/* <div className="grid gap-4 sm:grid-cols-2">
                         <Button variant="outline" type="button" className="w-full">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                 <path
@@ -101,8 +209,10 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                             Continue with Google
                         </Button>
                     </div> */}
-                </div>
-            </form >
+                    </div>
+                </form >
+            </Form>
+
             {/* <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
                 By clicking continue,<br /> you agree to our <a href="#">Terms of Service</a>{" "}
                 and <a href="#">Privacy Policy</a>.
