@@ -9,6 +9,7 @@ export const envConfig = {
     TOKEN_SECRET: process.env.TOKEN_SECRET!,
     NODE_ENV: process.env.NODE_ENV || "development",
     MONGO_DB_URL: process.env.MONGO_DB_URL!,
+    FRONTEND_URL: process.env.FRONTEND_URL!
 }
 
 export function loadEnv() {
