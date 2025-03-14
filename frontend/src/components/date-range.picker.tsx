@@ -13,8 +13,8 @@ export function DateRangePicker({ className }: React.HTMLAttributes<HTMLDivEleme
 
     return (
         <div className={cn("grid gap-2", className)}>
-            <Popover>
-                <PopoverTrigger>
+            <Popover modal>
+                <PopoverTrigger asChild>
                     <Button
                         id="date"
                         variant={"outline"}
