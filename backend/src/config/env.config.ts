@@ -1,8 +1,7 @@
 import { EnvNotFoundError } from "extils";
-import dotenv from "dotenv";
 import { appLogger } from "../utils/logger/index.js";
+import('@dotenvx/dotenvx/config.js')
 
-dotenv.configDotenv();
 
 export const envConfig = {
     PORT: process.env.PORT || 3000,
