@@ -6,7 +6,7 @@
     "private": true,
     "scripts": {
         "dev": "nodemon --ignore node_modules --ignore dist --watch src/ --ext ts,cts,mts,json --exec \"npm run build && node dist/index.js \"",
-        "start":"NODE_ENV=production dotenvx run -- node dist/index.js",
+        "start":"NODE_ENV=production node dist/index.js",
         "build": "rimraf dist/ && tsc",
         "lint": "echo 'lint not set'",
         "test": "jest"

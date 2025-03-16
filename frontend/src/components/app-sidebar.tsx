@@ -1,7 +1,7 @@
 import { Boxes, CoinsIcon, HandCoins, LayoutDashboard, LucideIcon, ReceiptIndianRupee, SettingsIcon } from "lucide-react"
 import { Button } from "./ui/button"
-import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "./ui/sidebar"
-import { useLocation } from "react-router"
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarTrigger } from "./ui/sidebar"
+import { useLocation, useNavigate } from "react-router"
 import useUserStore from "@/stores/user.store"
 import { useCallback } from "react"
 import { logoutUser } from "@/api/queries/user.queries"
@@ -32,6 +32,7 @@ const applicationItems: { title: string, url: string, icon: LucideIcon }[] = [
 export const AppSidebar = () => {
     const { pathname } = useLocation();
     const userState = useUserStore(state => state);
+    const navigate = useNavigate();
 
     const logout = useCallback(async () => {
         try {
@@ -43,10 +44,11 @@ export const AppSidebar = () => {
     }, [userState.isLoggedIn])
 
     return (
-        <Sidebar>
-            <SidebarHeader className="flex gap-1 flex-row items-center py-4">
+        <Sidebar collapsible="offcanvas">
+            <SidebarHeader className="flex gap-1 flex-row items-center py-4 relative">
                 <ReceiptIndianRupee size={"3rem"} className="text-brand" />
                 <h1 className="text-2xl font-extrabold">Expensum</h1>
+                <SidebarTrigger className="hidden group-data-[state=collapsed]:flex group-hover:flex absolute -right-[--spacing(7)] w-7 bg-background border border-l-0"/>
             </SidebarHeader>
 
             <SidebarContent>
@@ -55,12 +57,12 @@ export const AppSidebar = () => {
                         <SidebarMenu>
                             {
                                 applicationItems.map(item => (
-                                    <SidebarMenuItem key={item.title}>
+                                    <SidebarMenuItem key={item.title} className="hover:cursor-pointer">
                                         <SidebarMenuButton asChild isActive={item.url === pathname}>
-                                            <a href={item.url}>
+                                            <p onClick={()=>navigate(item.url)}>
                                                 <item.icon />
                                                 <span>{item.title}</span>
-                                            </a>
+                                            </p>
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
                                 ))

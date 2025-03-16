@@ -18,6 +18,6 @@ export const editCategory = async (categoryId: string, data: Pick<ICategory,"use
 };
 
 export const deleteCategory = async (categoryId: string) => {
-    const response = await axios_v1.delete<api_v1_data<null>>(`/categories/${categoryId}`);
+    const response = await axios_v1.delete<api_v1_data<ICategory>>(`/categories/${categoryId}`);
     return response.data;
 };

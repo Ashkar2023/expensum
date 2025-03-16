@@ -18,18 +18,17 @@ export class BudgetController {
         if (!amount) {
             throw new BadRequestError("Budget amount is required", 400);
         }
-
         try {
             const existingBudget = await this._BudgetModel.findOne({
                 user_id: req.user,
                 month: currentMonth,
                 year: currentYear
             });
-            console.log(existingBudget)
+            
             if (existingBudget) {
                 throw new BadRequestError("Budget for the current month already exists", 400);
             }
-
+            
             const budget = await this._BudgetModel.create({
                 amount,
                 user_id: req.user,

@@ -12,6 +12,6 @@ categoryRouter.get('/', createCallback(categoryControllerInstance.getAllCategori
 
 categoryRouter.put('/', createCallback(categoryControllerInstance.createCategory.bind(categoryControllerInstance)))
 
-categoryRouter.patch('/category_id', createCallback(categoryControllerInstance.editCategory.bind(categoryControllerInstance)))
+categoryRouter.patch('/:category_id', createCallback(categoryControllerInstance.editCategory.bind(categoryControllerInstance)))
 
-categoryRouter.delete('/category_id', createCallback(categoryControllerInstance.deleteCategory.bind(categoryControllerInstance)))
+categoryRouter.delete('/:category_id', createCallback(categoryControllerInstance.deleteCategory.bind(categoryControllerInstance)))

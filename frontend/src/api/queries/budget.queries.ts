@@ -7,8 +7,8 @@ export const createBudget = async (data: IBudget) => {
     return response.data;
 };
 
-export const editBudget = async (budget_id: string, data: Partial<IBudget>) => {
-    const response = await axios_v1.patch<api_v1_data<IBudget>>(`/budgets/${budget_id}`, data);
+export const editBudget = async ({ budget_id, amount }: { budget_id: string, amount: number }) => {
+    const response = await axios_v1.patch<api_v1_data<IBudget>>(`/budgets/${budget_id}`, { amount });
     return response.data;
 };
 

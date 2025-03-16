@@ -46,10 +46,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
         },
         onError(error) {
             toast.error(error.response?.data.message ?? "Internal server error", {
-                style: {
-                    border: "0.1px solid var(--color-border)",
-                    borderRadius: "0"
-                }
+                style:{
+...ToastStyle
+}
             })
         },
         retry: false,

@@ -1,11 +1,10 @@
-import { MonthPicker } from "@/components/month-picker";
-import { ExpenseDonutChart } from "@/components/donut.chart"
-import { SidebarTrigger } from "@/components/ui/sidebar"
-import { motion } from "framer-motion"
+import { ExpenseDonutChart } from "@/components/donut.chart";
+import { motion } from "framer-motion";
 import { useState } from "react";
 import { DailyBarChart } from "@/components/daily-bar.chart";
 import { BudgetCreator } from "@/components/budget.creator";
-import { BudgetRadialChart } from "@/components/budget-radial.chart";
+import { BudgetProgressBar } from "@/components/budget-progress-bar";
+import { IBudget } from "@/types/entities/budget.interface";
 
 const containerVariants = {
     hidden: {},
@@ -21,11 +20,10 @@ const common = {
 };
 
 export const Dashboard = () => {
-    const [month, setMonth] = useState<Date | undefined>(undefined)
+    const [budget, setBudget] = useState<IBudget | null>(null);
 
     return (
         <div className="p-4 bg-secondary h-full">
-            <SidebarTrigger />
 
             <motion.div
                 className="grid grid-cols-[1fr_1fr_1fr] grid-rows-2 gap-2"
@@ -33,19 +31,27 @@ export const Dashboard = () => {
                 initial="hidden"
                 animate="visible"
             >
-                <motion.div variants={{ ...common, hidden: { opacity: 0, y: -10 } }}>
+                <motion.div
+                    variants={{ ...common, hidden: { opacity: 0, y: -10 } }}
+                    className="max-h-fit"
+                >
                     <ExpenseDonutChart />
                 </motion.div>
 
-                <motion.div variants={{ ...common, hidden: { opacity: 0, x: +10 } }} className="col-span-2">
+                <motion.div
+                    variants={{ ...common, hidden: { opacity: 0, x: +10 } }}
+                    className="col-span-2"
+                >
                     <DailyBarChart />
                 </motion.div>
-                <motion.div variants={{ ...common, hidden: { opacity: 0, y: +10 } }}>
-                    <BudgetCreator />
+                <motion.div
+                    variants={{ ...common, hidden: { opacity: 0, y: +10 } }}
+                >
+                    <BudgetCreator budget={budget} setBudget={setBudget} />
                 </motion.div>
 
-                <motion.div variants={{ ...common, hidden: { opacity: 0, y: +10 } }}>
-                    <BudgetRadialChart />
+                <motion.div variants={{ ...common, hidden: { opacity: 0, x: +10 } }}>
+                    <BudgetProgressBar budget={budget} setBudget={setBudget} />
                 </motion.div>
             </motion.div>
 

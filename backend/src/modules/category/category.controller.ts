@@ -78,6 +78,10 @@ export class CategoryController {
 
         } catch (error) {
             appLogger.error("Error updating category", error);
+            if (error instanceof BadRequestError) {
+                throw error
+            }
+
             throw new DatabaseOpError("Error updating category", 500);
         }
     }
@@ -86,7 +90,7 @@ export class CategoryController {
         const { category_id } = req.params;
 
         try {
-            const expenses = await this._ExpenseModel.find({ category_id: category_id, user_id: req.user });
+            const expenses = await this._ExpenseModel.find({ category: category_id, user_id: req.user });
 
             if (expenses.length > 0) {
                 throw new BadRequestError("Cannot delete category with existing expenses", 400);
@@ -106,6 +110,9 @@ export class CategoryController {
                 .get();
         } catch (error) {
             appLogger.error("Error deleting category", error);
+            if (error instanceof BadRequestError) {
+                throw error
+            }
             throw new DatabaseOpError("Error deleting category", 500);
         }
     }

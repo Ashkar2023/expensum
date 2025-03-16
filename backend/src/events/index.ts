@@ -13,7 +13,7 @@ export enum appEmitterEvents {
 
 const defaultCategories: Pick<ICategory, "name" | 'readonly'>[] = [
     {
-        name: "Others",
+        name: "Other",
         readonly: true,
     },
     {
