@@ -14,7 +14,7 @@ export const envConfig = {
 
 export function loadEnv() {
     for (let env in envConfig) {
-        appLogger.info(env);
+        appLogger.info(envConfig[env as keyof typeof envConfig]);
         if (!envConfig[env as keyof typeof envConfig]) {
             appLogger.error(envConfig[env as keyof typeof envConfig]);
             
