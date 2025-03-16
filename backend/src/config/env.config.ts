@@ -1,6 +1,8 @@
 import { EnvNotFoundError } from "extils";
 import { appLogger } from "../utils/logger/index.js";
-import('@dotenvx/dotenvx/config.js')
+import { config } from '@dotenvx/dotenvx'
+
+config();
 
 
 export const envConfig = {
@@ -16,10 +18,10 @@ export function loadEnv() {
         appLogger.info(envConfig[env as keyof typeof envConfig]);
         if (!envConfig[env as keyof typeof envConfig]) {
             appLogger.error(envConfig[env as keyof typeof envConfig]);
-            
+
             throw new EnvNotFoundError(env, "expensum backend")
         }
     }
-    
+
     appLogger.info("ENV's all set");
 };
