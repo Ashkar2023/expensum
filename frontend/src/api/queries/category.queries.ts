@@ -12,8 +12,14 @@ export const createCategory = async (data: Pick<ICategory, "name" | "user_id">) 
     return response.data;
 };
 
-export const editCategory = async (categoryId: string, data: Pick<ICategory,"user_id"| "name">) => {
-    const response = await axios_v1.patch<api_v1_data<ICategory>>(`/categories/${categoryId}`, data);
+export const editCategory = async ({ categoryId, name, user_id }: {
+    categoryId: string,
+} & Pick<ICategory, "user_id" | "name">
+) => {
+    const response = await axios_v1.patch<api_v1_data<ICategory>>(`/categories/${categoryId}`, {
+        name,
+        userId: user_id
+    });
     return response.data;
 };
 

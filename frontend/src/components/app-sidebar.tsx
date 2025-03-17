@@ -48,7 +48,7 @@ export const AppSidebar = () => {
             <SidebarHeader className="flex gap-1 flex-row items-center py-4 relative">
                 <ReceiptIndianRupee size={"3rem"} className="text-brand" />
                 <h1 className="text-2xl font-extrabold">Expensum</h1>
-                <SidebarTrigger className="hidden group-data-[state=collapsed]:flex group-hover:flex absolute -right-[--spacing(7)] w-7 bg-background border border-l-0"/>
+                <SidebarTrigger className="hidden group-data-[state=collapsed]:flex group-hover:flex absolute -right-[--spacing(7)] w-7 bg-background border border-l-0 animate-in fade-in duration-250"/>
             </SidebarHeader>
 
             <SidebarContent>
