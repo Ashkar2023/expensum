@@ -12,6 +12,9 @@ export default defineConfig({
             "@": resolve(__dirname, "./src")
         }
     },
+    build:{
+        outDir:"dist"
+    },
     server: {
         port: 5252
     }
