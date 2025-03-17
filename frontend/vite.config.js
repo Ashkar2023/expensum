@@ -6,7 +6,7 @@ import ClosePlugin from "./closePlugin"
 
 // https://vite.dev/config/
 export default defineConfig({
-    plugins: [react(), tailwindcss(), ClosePlugin() as any],
+    plugins: [react(), tailwindcss(), ClosePlugin()],
     resolve: {
         alias: {
             "@": resolve(__dirname, "./src")
